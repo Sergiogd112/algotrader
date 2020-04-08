@@ -48,7 +48,20 @@ symbols=['TSLA','AAPL','GOOG','AMZN','AMD','INTC','F']
 
 
 # In[16]:
+from git import Repo
 
+PATH_OF_GIT_REPO = r'.git'  # make sure .git folder is properly configured
+COMMIT_MESSAGE = 'update'
+
+def git_push():
+    try:
+        repo = Repo(PATH_OF_GIT_REPO)
+        repo.git.add(update=True)
+        repo.index.commit(COMMIT_MESSAGE)
+        origin = repo.remote(name='origin')
+        origin.push()
+    except:
+        print('Some error occured while pushing the code')    
 
 class Symbol:
     def __init__(self,data,tick):
@@ -173,6 +186,7 @@ while True:
     os.system('echo "" >> '+fname)
     with open(fname,'wb') as f:
         pk.dump(today,f)
+    git_push()
 
     time.sleep(sl)
 
