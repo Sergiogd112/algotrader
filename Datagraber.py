@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[13]:
 
 
 import urllib3
@@ -13,9 +13,9 @@ import datetime
 import dateutil.relativedelta as dr
 import pandas as pd
 from urllib import request
+import os
 
-
-# In[2]:
+# In[14]:
 
 
 def get_constituents():
@@ -25,7 +25,7 @@ def get_constituents():
     content = opener.read().decode() # Convert bytes to UTF-8
 
     soup = BeautifulSoup(content)
-    tables = soup.find_all('table') # HTML table we actually need is tables[0]
+    tables = soup.find_all('table') # HTML table we actually need is tables[0] 
 
     external_class = tables[0].findAll('a', {'class':'external text'})
 
@@ -38,16 +38,16 @@ def get_constituents():
     return tickers
 
 
-# In[3]:
+# In[15]:
 
 
 http = urllib3.PoolManager()
 ohlcurl='https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&interval=5min&apikey=46O5MSJ0J745T9J8&outputsize=full&symbol='
 macdurl='https://www.alphavantage.co/query?function=MACDEXT&interval=5min&series_type=open&apikey=46O5MSJ0J745T9J8&symbol='
-symbols=['TSLA','AAPL','GOOG','AMZN','AMD','HPQ','INTC','ARM']
+symbols=['TSLA','AAPL','GOOG','AMZN','AMD','INTC','F']
 
 
-# In[4]:
+# In[16]:
 
 
 class Symbol:
@@ -57,7 +57,11 @@ class Symbol:
     def from_url(ohlcurl,macdurl, interval,tick):
         ohlctmp=json.loads(http.request('GET', ohlcurl).data)
         print(ohlctmp.keys())
-        ohlcdata=ohlctmp['Time Series ('+interval+')']
+        try:
+            ohlcdata=ohlctmp['Time Series ('+interval+')']
+        except Exception as e:
+            print(ohlctmp(list(ohlctmp.keys())[0]))
+            print(e.traceback)
         time.sleep(12)
         try:
             macddata=json.loads(http.request('GET',macdurl).data)['Technical Analysis: MACDEXT']
@@ -91,43 +95,95 @@ class Symbol:
                 self.data[key]=data[key]
 
 
-# In[5]:
+# In[17]:
 
 
 #class Manager:
 #    def __init__():
 
 
-# In[6]:
+# In[18]:
 
 
 #symbolsdata=[Symbol.from_url(ohlcurl+x,macdurl+x,'5min',x)for x in symbols]
 
 
-# In[7]:
+# In[19]:
 
 
-with open('/home/sergio/github/algotrader/sdata.pkl','rb') as f:
-    symbolsdata=pk.load(f)
+#with open('sdata.pkl','rb') as f:
+#    symbolsdata=pk.load(f)
 
 
-# In[8]:
+# In[20]:
 
 
-[x.update(ohlcurl+x.tick,macdurl+x.tick,'5min') for x in symbolsdata]
+#[x.update(ohlcurl+x.tick,macdurl+x.tick,'5min') for x in symbolsdata]
 
 
-# In[9]:
+# In[21]:
 
 
-len(symbolsdata[0].data)
+#len(symbolsdata[0].data)
 
 
 # In[10]:
 
 
-with open('/home/sergio/github/algotrader/sdata.pkl','wb') as f:
-    pk.dump(symbolsdata,f)
+#with open('sdata.pkl','wb') as f:
+ #   pk.dump(symbolsdata,f)
+
+
+# In[34]:
+
+
+#len(list(symbolsdata[0].data.keys()))/(12*24)
+
+
+# In[23]:
+
+
+#symbolsdata[0].data[list(symbolsdata[0].data.keys())[-1]]
+
+
+# In[30]:
+
+
+#months=[[int(x.split('-')[1]), int(x.split('-')[2].split()[0])] for x in list(symbolsdata[0].data.keys())]
+
+
+# In[31]:
+
+
+#min(months)
+
+
+# In[32]:
+
+
+#12*24
+
+
+# In[40]:
+
+sl=3600*24
+while True:
+    today=[[Symbol.from_url(ohlcurl+x,macdurl+x,'5min',x)for x in symbols]]
+    fname='/home/pi/github/algotrader/data/'+'_'.join(time.ctime().split())+'.pkl'
+    os.system('echo "" >> '+fname)
+    with open(fname,'wb') as f:
+        pk.dump(today,f)
+
+    time.sleep(sl)
+
+# In[39]:
+
+
+#'_'.join(time.ctime().split())
 
 
 # In[ ]:
+
+
+
+
