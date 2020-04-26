@@ -59,16 +59,96 @@ def git_push():
     except:
         print('Some error occured while pushing the code')    
 
+# In[17]:
+
+
+#class Manager:
+#    def __init__():
+
+
+# In[18]:
+
+
+#symbolsdata=[Symbol.from_url(ohlcurl+x,macdurl+x,'5min',x)for x in symbols]
+
+
+# In[19]:
+
+
+#with open('sdata.pkl','rb') as f:
+#    symbolsdata=pk.load(f)
+
+
+# In[20]:
+
+
+#[x.update(ohlcurl+x.tick,macdurl+x.tick,'5min') for x in symbolsdata]
+
+
+# In[21]:
+
+
+#len(symbolsdata[0].data)
+
+
+# In[10]:
+
+
+#with open('sdata.pkl','wb') as f:
+ #   pk.dump(symbolsdata,f)
+
+
+# In[34]:
+
+
+#len(list(symbolsdata[0].data.keys()))/(12*24)
+
+
+# In[23]:
+
+
+#symbolsdata[0].data[list(symbolsdata[0].data.keys())[-1]]
+
+
+# In[30]:
+
+
+#months=[[int(x.split('-')[1]), int(x.split('-')[2].split()[0])] for x in list(symbolsdata[0].data.keys())]
+
+
+# In[31]:
+
+
+#min(months)
+
+
+# In[32]:
+
+
+#12*24
+
+
+# In[40]:
 
 sl=3600*24
 while True:
     today=[[Symbol.from_url(ohlcurl+x,macdurl+x,'5min',x)for x in symbols]]
-    fname='/home/sergio/github/algotrader/data/'+'_'.join(time.ctime().split())+'.pkl'
-    with open(fname,'w+') as f:
+    fname='/home/pi/github/algotrader/data/'+'_'.join(time.ctime().split())+'.pkl'
+    os.system('echo "" >> '+fname)
+    with open(fname,'wb') as f:
         pk.dump(today,f)
-    print('done')
     git_push()
 
     time.sleep(sl)
+
+# In[39]:
+
+
+#'_'.join(time.ctime().split())
+
+
+# In[ ]:
+
+
 
 
